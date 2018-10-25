@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping( "/multiplications" )
-public class MultiplicationController {
+public final class MultiplicationController {
     private final MultiplicationService multiplicationService;
 
     @Autowired
