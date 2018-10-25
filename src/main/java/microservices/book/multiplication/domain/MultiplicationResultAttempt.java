@@ -12,11 +12,14 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode
-public final class Multiplication {
-    private final int factorA;
-    private final int factorB;
+public final class MultiplicationResultAttempt {
+    private final User user;
+    private final Multiplication multiplication;
+    private final int resultAttempt;
 
-    public Multiplication() {
-        this(0, 0);
+    public MultiplicationResultAttempt() {
+        user = null;
+        multiplication = null;
+        resultAttempt = -1;
     }
 }
