@@ -1,9 +1,6 @@
 package microservices.book.multiplication.domain;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -29,7 +26,9 @@ public final class MultiplicationResultAttempt {
     private final Multiplication multiplication;
 
     private final int resultAttempt;
-    private final boolean correct;
+
+    @Setter
+    private boolean correct;
 
     public MultiplicationResultAttempt() {
         user = null;

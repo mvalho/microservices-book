@@ -54,8 +54,12 @@ public class MultiplicationServiceImplTest {
         //given
         Multiplication multiplication = new Multiplication( 50, 60 );
         User user = new User( "john_doe" );
-        MultiplicationResultAttempt attempt = new MultiplicationResultAttempt( user, multiplication, 3000, false );
-        MultiplicationResultAttempt verifiedAttempt = new MultiplicationResultAttempt(user, multiplication, 3000, true);
+
+        MultiplicationResultAttempt attempt = new MultiplicationResultAttempt( user, multiplication, 3000 );
+        attempt.setCorrect(false);
+
+        MultiplicationResultAttempt verifiedAttempt = new MultiplicationResultAttempt(user, multiplication, 3000);
+        verifiedAttempt.setCorrect(true);
 
         given(userRepository.findByAlias("john_doe")).willReturn(Optional.empty());
 
@@ -72,7 +76,8 @@ public class MultiplicationServiceImplTest {
         //given
         Multiplication multiplication = new Multiplication( 50, 60 );
         User user = new User( "john_doe" );
-        MultiplicationResultAttempt attempt = new MultiplicationResultAttempt( user, multiplication, 3010, false );
+        MultiplicationResultAttempt attempt = new MultiplicationResultAttempt( user, multiplication, 3010 );
+        attempt.setCorrect(false);
 
         given(userRepository.findByAlias("john_doe")).willReturn(Optional.empty());
 
@@ -81,6 +86,30 @@ public class MultiplicationServiceImplTest {
 
         //then
         assertThat( attemptResult ).isFalse();
+        then(attemptRepository).should().save(attempt);
+    }
+
+    @Test
+    public void checkMultiplicationAttemptAlreadyExistTest() {
+        //given
+        Multiplication multiplication = new Multiplication(50, 30 );
+        User user = new User("john_doe");
+
+        MultiplicationResultAttempt attempt = new MultiplicationResultAttempt( user, multiplication, 3010 );
+        attempt.setCorrect(false);
+
+        MultiplicationResultAttempt existedAttempt = new MultiplicationResultAttempt( user, multiplication, 3010 );
+        existedAttempt.setCorrect(true);
+
+        given(userRepository.findByAlias(("john_doe"))).willReturn(Optional.empty());
+        given(attemptRepository.findByUser_AliasAndMultiplication_FactorAAndMultiplication_FactorB("john_doe", 50, 30)).willReturn(Optional.of(existedAttempt));
+
+        //when
+        boolean attemptResult = multiplicationServiceImpl.checkAttempt(attempt);
+
+        //then
+        assertThat( attemptResult ).isFalse();
+        then(attemptRepository).should().findByUser_AliasAndMultiplication_FactorAAndMultiplication_FactorB("john_doe", 50, 30);
         then(attemptRepository).should().save(attempt);
     }
 }
