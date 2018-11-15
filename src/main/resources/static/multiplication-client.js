@@ -3,13 +3,32 @@ function updateMultiplication() {
         url: "http://localhost:8080/multiplications/random"
     }).then(function (data) {
         //Cleans the form
-        $("#attempt-form").find("input[name = 'result-attempt']").val("");
-        $("#attempt-form").find("input[name = 'user-alias']").val("");
+        var $attemptForm = $("#attempt-form");
+        $attemptForm.find("input[name = 'result-attempt']").val("");
+        $attemptForm.find("input[name = 'user-alias']").val("");
 
         //Gets a random challenge from API and loads the data in the HTML
         $('.multiplication-a').empty().append(data.factorA);
         $('.multiplication-b').empty().append(data.factorB);
     });
+}
+
+function updateStats(alias) {
+    $.ajax({
+        url: "http://localhost:8080/results?alias=" + alias
+    }).then(function (data) {
+        $('#stats-body').empty();
+
+        data.forEach(function(row) {
+            $('#stats-body').append(
+                '<tr>' +
+                '<td>' + row.id + '</td>' +
+                '<td>' + row.multiplication.factorA + ' x ' + row.multiplication.factorB + '</td>' +
+                '<td>' + row.resultAttempt + '</td>' +
+                '<td>' + (row.correct === true ? 'YES' : 'NO') + '</td>' +
+                '</tr>')
+        })
+    })
 }
 
 $(document).ready(function () {
@@ -50,9 +69,10 @@ $(document).ready(function () {
                 } else {
                     $('.result-message').empty().append("Oops that's not correct! But keep trying");
                 }
+                updateStats(userAlias);
             }
         });
 
-        updateMultiplication()
+        updateMultiplication();
     });
 });
